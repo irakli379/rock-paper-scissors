@@ -1,51 +1,72 @@
+let humanScore = 0;
+let computerScore = 0;
+let winText;
+
 function getComputerChoice() {
   const num = Math.floor(Math.random() * 3);
-
   const sign = num === 0 ? "rock" : num === 1 ? "paper" : "scissors";
 
   return sign;
 }
 
-function getHumanChoice() {
-  const choice = prompt("Enter either rock, paper or scissors:");
-
-  return choice;
-}
-
-let humanScore = 0;
-let computerScore = 0;
-
 function playRound(humanChoice, computerChoice) {
+  if (!humanChoice) return alert("no value");
+
   humanChoice = humanChoice.toLowerCase();
-  computerChoice = computerChoice.toLowerCase();
 
   if (
     humanChoice !== "rock" &&
     humanChoice !== "paper" &&
     humanChoice !== "scissors"
   )
-    return console.log("wrong input");
+    winText = "wrong input";
 
   if (
     (humanChoice === "rock" && computerChoice === "scissors") ||
     (humanChoice === "scissors" && computerChoice === "paper") ||
     (humanChoice === "paper" && computerChoice === "rock")
   ) {
-    console.log(`You win! ${humanChoice} beats ${computerChoice}.`);
+    winText = `You win! ${humanChoice} beats ${computerChoice}.`;
     ++humanScore;
   } else if (humanChoice === computerChoice) {
-    console.log("It's a tie!");
+    winText = "It's a tie!";
   } else {
-    console.log(`You lose! ${computerChoice} beats ${humanChoice}`);
+    winText = `You lose! ${computerChoice} beats ${humanChoice}`;
     ++computerScore;
   }
 }
 
-function playGame(rounds) {
-  for (let i = 1; i <= rounds; i++) {
-    playRound(getHumanChoice(), getComputerChoice());
-  }
-  console.log(humanScore, computerScore);
-}
+// DOM manipulation code
+const body = document.querySelector("body");
+const cont = document.createElement("div");
+const winner = document.createElement("div");
+const btnRock = document.createElement("button");
+const btnPaper = document.createElement("button");
+const btnScissors = document.createElement("button");
+const announce = document.createElement("h1");
 
-playGame(3);
+body.appendChild(cont);
+cont.append(btnPaper, btnRock, btnScissors, winner, announce);
+
+cont.setAttribute("class", "cont");
+btnPaper.textContent = "Paper";
+btnRock.textContent = "Rock";
+btnScissors.textContent = "Scissors";
+
+const buttons = document.querySelectorAll("button");
+
+const btns = Array.from(buttons);
+console.log(btns);
+
+btns.forEach((cur) => {
+  cur.addEventListener("click", function () {
+    playRound(cur.textContent, getComputerChoice());
+    winner.textContent = `${winText}. your score is ${humanScore}, computer score is ${computerScore}`;
+
+    if (humanScore >= 5 && computerScore < 5) {
+      announce.textContent = "You are the WINNER!";
+    } else if (computerScore >= 5 && humanScore < 5) {
+      announce.textContent = "Computer wins!";
+    }
+  });
+});
